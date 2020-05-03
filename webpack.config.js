@@ -16,7 +16,7 @@ const minify = require('html-minifier-terser').minify;
 
 let views = "";
 
-const view_files = glob.sync(path.join(__dirname, '/src/views', '*.html'));
+const view_files = glob.sync(path.join(__dirname, '/src/views/*.html'));
 
 view_files.forEach(file => {
 
@@ -28,8 +28,8 @@ view_files.forEach(file => {
 
 });
 
-const header = fs.readFileSync(path.join(__dirname, '/src/header.html'), 'utf8').toString();
-const footer = fs.readFileSync(path.join(__dirname, '/src/footer.html'), 'utf8').toString();
+const header = fs.readFileSync(path.join(__dirname, '/src/html/header.html'), 'utf8').toString();
+const footer = fs.readFileSync(path.join(__dirname, '/src/html/footer.html'), 'utf8').toString();
 
 if(process.env.NODE_ENV === "production") {
 
