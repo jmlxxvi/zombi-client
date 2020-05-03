@@ -1,0 +1,381 @@
+<h1 class="display-4">Zombi Framework</h1>
+
+<img src="img/json-rest.png" />
+
+<h4>Rational</h4>
+
+Zombi is a free implementation of the JSON-RPC mechanism which allows to connect an application running as client and a server holding the data.
+<br>
+The key concept is that a client just need to worry about executing functions instead of taking car of the transport implementation or transmission logic, as it is the case for REST applications.
+<br>
+REST is a great mechanism for many things such as content delivery, and it has served us well for two decades. But it’s time to break the silence and admit that the RESTful API concept is probably one of the worst ideas ever widely adopted in web software.
+<br><br>
+This is true because:
+<br><br>
+
+<ul>
+    <li>There is little agreement on what a RESTful API is</li>
+    <li>The REST vocabulary is not fully supported</li>
+    <li>The REST vocabulary is not rich enough for APIs</li>
+    <li>RESTful APIs are very hard to debug</li>
+    <li>RESTful APIs are usually tied to HTTP</li>
+</ul>
+
+<br>
+Zombi's JSON-RPC APIs offer several advantages, including:
+<br><br>
+
+<ul>
+    <li>It uses just one transmission method to send a request: <i>POST</i> for HTTP and <i>send</i> for WebSockets</li>
+    <li>It completely separates the request content from the transmission mechanism. All errors, warnings, and data are placed in - the JSON request payload</li>
+    <li>It uses only one response code to confirm proper execution of the server side function</li>
+    <li>It is easy to debug since transaction information is found in easy-to-read JSON inside the payloads using a single, domain specific vocabulary</li>
+    <li>It can easily be moved or shared between transmission channels such as HTTP/S, WebSockets, XMPP, telnet, SFTP, SCP, or SSH</li>
+</ul>
+
+<br>
+To accomplish the the declarations above Zombi follows the following design principles:
+<br><br>
+
+<ul>
+    <li>Uses HTTPS/WebSockets and JSON</li>
+    <li>Uses a flexible vocabulary</li>
+    <li>Uses just one message type</li>
+    <li>Uses asynchronous transactions when needed</li>
+    <li>Uses a reliable request and response</li>
+    <li>Separate the request from the transport</li>
+    <li>Make it easy to debug</li>
+    <li>Make it portable</li>
+</ul>
+
+<br>
+
+<h4>How it works</h4>
+
+On the client side Zombi uses an JS object that implements the logic to connect to the server and check for response it sends.
+<br>
+This object exposes two main services (aka functions) to call the server using either HTTP or WebSockets as transport mechanism. 
+Which one to choose is up to the programmer and depends on the use case the application is trying to solve.
+<br>
+<br>
+For example a client that needs to get data from the server would execute:
+
+<pre class="prettyprint">
+ZOMBI.server(<i>params</i>, <i>callback</i>);
+</pre>
+
+Where params is an array (optionally and object) that specifies the details of the function to call, for example:
+
+<pre class="prettyprint">ZOMBI.server(["sys_login", "login", ["john", "Pas$$w0rd"]], (error, response) => {...});
+</pre>
+
+Here we are calling the remote function "login" defined on the module "sys_login" and passing along the arguments for the function, and array in this case.
+<br>
+The second parameter is the (optional) callback function with the <a target="_blank" href="https://nodejs.org/api/errors.html#errors_error_first_callbacks" style="text-decoration: underline;">error first</a> form. 
+<br><br>
+On the server side there should be a module defined that matches the call from the client.
+<br>
+Following the example there should be a function defined as /server/face/sys_login.js
+<br>
+The directory /server/face is where all modules which are callable from outside reside.
+<br><br>
+The function that responds to the client request should be defined as:
+
+<pre class="prettyprint">
+const <function> = async (args, extras) => {...}
+</pre>
+
+Following the example above the login function could be:
+
+<pre class="prettyprint">
+const login = async (args, extras) => {
+	
+	try {
+
+		const username = args[0];
+		const password = args[1];
+
+		...
+
+		return [false, "All right!"];
+
+	} catch (error) {
+
+		[true, error.message];
+
+	}
+	
+}
+</pre>
+
+As you can see the arguments sent by the client (the array ["john", "Pas$$w0rd"] in the example) are available to the server function as the "args" argument.
+<br>
+The server function is responsible to check that the client sent was it was suppossed to or not. 
+<br>
+For example to check if some object key exists, the arguments is an array, etc. 
+<br>
+As an example:
+
+<pre class="prettyprint">
+const do_something = async (args, extras) => {
+	
+	try {
+
+		if(Array.is_array(args) && args.lenght === 2) {
+
+			const something  = args[0];
+			const otherthing = args[1];
+
+			...
+
+			return [false, "All right!"];
+		
+		} else {
+
+			throw new Error("Invalid arguments");
+
+		}
+		
+
+	} catch (error) {
+
+		[true, null, error.message];
+
+	}
+	
+}
+</pre>
+
+Once the server side function executes it should return some information indicating what happened. 
+<br>
+The status of the execution is sent as an array with 1 to 3 elements with the form:
+
+<pre class="prettyprint">
+[<i>error</i>, <i>data</i>, <i>message</i>];
+</pre>
+
+Here <i>error</i> is a boolean value, <i>data</i> is any JSON transformable data and <i>message</i> is an string.
+<br>
+Both <i>data</i> and <i>message</i> are optional so the minimal return array from the server function would be:
+
+<pre class="prettyprint">
+[<i>error</i>];
+</pre>
+
+Then [false] as a response indicates that the function ran without errors and [true] means the opposite.
+<br>
+The second element is the data returned from the server (null is the default if ommited), like:
+
+<pre class="prettyprint">
+return [false, [1, 2, 3]];
+</pre>
+
+The third argument is the message sent to the client, like:
+
+<pre class="prettyprint">
+[true, null, "There was a problem excuting the thing you sent"];
+</pre>
+
+All three elements of the returning array modify the JSON data returned to the client as response to the request it sent. 
+<br>
+
+Examining an example of what is used to login on the Zombi UI application we get:
+<br>
+<br>
+Client:
+<pre class="prettyprint linenums">
+$("#index_login_button").on("click", (event) => {
+
+    event.preventDefault();
+
+    const password = $("#index_login_password").val();
+    const username = $("#index_login_username").val();
+    const language = $("#index_login_language").val();
+
+    ZOMBI.server(
+        ["sys_login", "login", [username, password, language]],
+
+        (error, response) => {
+
+            if(error) {
+
+                INDEX.flash(index_login_18n_labels[ZOMBI.language()]["RESTART"]);
+
+            } else {
+
+                if(response.error) {
+
+                    $("#index_login_message").text(index_login_18n_labels[language][response.message]);
+                    $("#index_login_message").removeClass("d-none");
+
+                } else {
+
+                    ZOMBI.token(response.data.token);
+
+                    if(response.data.fullname) {
+
+                        $("#index_navbar_username").text(response.data.fullname);
+
+                        ZOMBI.fullname(response.data.fullname);
+
+                    }
+
+                    if(response.data.timezone) {
+
+                        ZOMBI.timezone(response.data.timezone);
+
+                    } else {
+
+                        ZOMBI.timezone(ZOMBI.config("DEFAULT_TIMEZONE"));
+
+                    }
+
+                    INDEX.i18n.init(response.data.i18n, true);
+
+                    INDEX.router.navigate();
+
+                    $('#index_login_modal').modal('hide');
+
+                    ZOMBI.ws.connect(false);
+
+                }
+            
+            }
+            
+        }
+
+    );
+
+});
+</pre>
+
+The call to the server starts on line 9.
+<br>
+When executing the above function the parameters on line 10 are used to create a JSON representation of what should be run on the server.
+<br>
+The JSON data would look like the following:
+
+<pre class="prettyprint">
+{
+    "token": null,
+    "module": "sys_login",
+    "function": "login",
+    "args": [
+        "john",
+        "Pas$$w0rd",
+        "es"
+    ],
+    "config": {},
+    "sequence": 4
+}
+</pre>
+
+Once the server receives the JSON data it executes the function <i>login</i> on the module <i>sys_login</i> using the arguments <i>["john","Pas$$w0rd","es"]</i>
+<br>
+The function on the server for login is:
+
+<pre class="prettyprint linenums">
+const login = async (args, extras) => {
+
+    try {
+
+        if(!Array.isArray(args) || typeof args[0] === "undefined") { throw Error(i18n.label(extras.token, "WRONG_PARAMETERS")); }
+
+        const username = args[0];
+        const password = args[1];
+        const language = args[2];
+
+        const userlower = username.toLowerCase();
+
+        const sql = `select 
+                        zou.username,
+                        zou.password,
+                        zou.full_name,
+                        zou.id,
+                        zzo.zone_name,
+                        zou.is_admin
+                    from
+                        zombi_users zou
+                            left join zombi_tz_zones zzo on (zou.timezone_id = zzo.zone_id)
+                            left join zombi_i18n_languages zla on (zou.language_id = zla.id)
+                            left join zombi_tz_countries zco on (zou.country_id = zco.id)
+                    where lower(username) = :username`;
+
+        const res = await db.sql(sql, [userlower]);
+
+        if(res.rows.length === 0) {
+
+            return [true, null, "NOLOGIN"];
+
+        } else {
+
+            const encrpass  = res.rows[0][1];
+            const full_name = res.rows[0][2];
+            const user_id   = res.rows[0][3];
+            const timezone  = (res.rows[0][4] === null) ? config.i18n.timezone : res.rows[0][4];
+            const is_admin  = (res.rows[0][5] === "Y") ? true : false ;
+
+            if(await security.password_compare(password, encrpass)) {
+
+                const token = session.token();
+
+                session.create(token, user_id, language, timezone, full_name, is_admin);
+
+                return([false, {fullname: full_name, token: token, timezone: timezone, i18n: i18n.get_lang_data(language)}]);
+
+            } else {
+
+                return [true, null, "NOLOGIN"];
+
+            }
+
+        }
+
+    } catch(error) {
+
+        log(error.message, "sys_login", true);
+
+        return [true, null, "NOLOGIN"];
+
+    }
+
+};
+</pre>
+
+The important parts of the function to understand how Zombi works are:
+<br>
+Line 5: the arguments are checked to be valid.
+<br>
+Lines 31, 51, 61 are those where there is an error condition detected and returned to the client.
+<br>
+Line 47 is where the function ends without errors and returns the data to the client.
+<br>
+<br>
+Once the server function runs successfully the data is returned as JSON with the form: 
+
+<pre class="prettyprint">
+{
+    "error": false,
+    "message": "ok",
+    "data": {
+        "fullname": "John Cash",
+        "token": "3EE971CF13090BD50DC07B31DFACBF7AC7B4D0912B119BCD166D3DE0B33C405AD515F700A23AE2AE10348731E8126B17F528D4B0ADAC02FA757A138EEB2EC4A9",
+        "timezone": "America/Argentina/Buenos_Aires",
+        "i18n": {
+            "1_DIGIT_NUMBER": "Un número de un dígito",
+            "ABOUT": "Acerca de",
+            "ACCEPT": "Aceptar",
+            "ZT_OF": "de",
+            "ZT_ROWS": "Registros",
+            "ZT_VIEW": "Ver"
+        }
+    },
+    "info": {
+        "time": 145,
+        "sequence": 4,
+        "expired": false
+    }
+}
+</pre>
+
+
