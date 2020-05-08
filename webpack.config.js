@@ -14,6 +14,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 // https://github.com/DanielRuf/html-minifier-terser
 const minify = require('html-minifier-terser').minify;
 
+const mode = process.env.NODE_ENV;
+
 let views = "";
 
 const view_files = glob.sync(path.join(__dirname, '/src/views/*.html'));
@@ -28,10 +30,7 @@ view_files.forEach(file => {
 
 });
 
-const header = fs.readFileSync(path.join(__dirname, '/src/html/header.html'), 'utf8').toString();
-const footer = fs.readFileSync(path.join(__dirname, '/src/html/footer.html'), 'utf8').toString();
-
-if(process.env.NODE_ENV === "production") {
+if (mode === "production") {
 
     views = minify(views, {
         collapseWhitespace: true,
@@ -47,10 +46,14 @@ if(process.env.NODE_ENV === "production") {
 }
 
 module.exports = {
-    entry: "./src/index.js",
+    mode,
+    entry: {
+        index: './src/index.js',
+        login: './src/login.js'
+    },
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "bundle.js"
+        filename: "[name].bundle.js"
     },
     module: {
         rules: [
@@ -61,15 +64,44 @@ module.exports = {
                     { loader: "css-loader", options: { importLoaders: 1 } },
                     { loader: "postcss-loader" }
                 ]
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'css/fonts/'
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            "@babel/preset-env"
+                        ]
+                    }
+                }
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
+            chunks: ['index'],
+            filename: "index.html",
             template: "./src/index.html",
-            views,
-            header,
-            footer
+            views
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['login'],
+            filename: "login.html",
+            template: "./src/login.html"
         }),
         new MiniCssExtractPlugin({
             filename: "bundle.css"

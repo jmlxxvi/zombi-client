@@ -1,4 +1,4 @@
-.dt-right {
-    text-align: right;
-  }
-  
+@font-face {
+  font-family: "MontserratSubrayada";
+  src: url('fonts/MontserratSubrayada-Bold.ttf') format("truetype");
+}

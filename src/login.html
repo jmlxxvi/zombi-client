@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body>
+
+    <div id="flash_message" class="opacity-0 transition-opacity duration-300 absolute top-0 right-0 left-0 my-2 mx-4 sm:mx-4 md:mx-16 lg:mx-20 xl:mx-20 border px-4 py-3 rounded bg-red-100 text-red-700 border-red-400" role="alert">
+        <strong class="font-bold flash_title"></strong>
+        <span class="block sm:inline mr-6 flash_text"></span>
+        <span class="cursor-pointer absolute top-0 bottom-0 right-0 px-4 py-3 flash_close">
+          <svg class="fill-current h-6 w-6 flash_close" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+        </span>
+      </div>
+
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full">
+            <div>
+                <!-- <img class="mx-auto h-12 w-auto" src="/img/logos/workflow-mark-on-white.svg" alt="Workflow" /> -->
+                <div class="text-center">
+                    <span class="text-3xl" style="font-family: 'MontserratSubrayada'">Zombi</span>
+                </div>
+            </div>
+            <div class="mt-8">
+                <input type="hidden" name="remember" value="true" />
+                <div class="rounded-md shadow-sm">
+                    <div>
+                        <input aria-label="Username" id="username" type="username" required
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
+                            placeholder="Username" />
+                    </div>
+                    <div class="-mt-px">
+                        <input aria-label="Password" id="password" type="password" required
+                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
+                            placeholder="Password" />
+                    </div>
+                </div>
+
+                <!-- <div class="mt-6 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" type="checkbox"
+                            class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" />
+                        <label for="remember_me" class="ml-2 block text-sm leading-5 text-gray-900">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="text-sm leading-5">
+                        <a href="#"
+                            class="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div> -->
+
+
+
+                <div class="mt-6">
+                    <button id="login_button"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition ease-in-out duration-150"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span id="login_button_text">Sign in</span>
+                    </button>
+                </div>
+
+                <div id="languages" class="mt-6 text-xs flex ">
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="es">Español</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="pt">Português</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="en">English</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="fr">Français</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="de">Deutsch</a>
+                </div>
+
+                <div id="languages" class="mt-2 text-xs flex">
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="it">Italiano</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="ko">한국어</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="ja">日本語</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="he">עברית</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="zh">中文</a>
+                    <a href="#" class="lang_select_link flex-1 text-center" data-lang="ru">Русский</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
