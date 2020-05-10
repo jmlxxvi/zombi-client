@@ -22,11 +22,11 @@ const view_files = glob.sync(path.join(__dirname, '/src/views/*.html'));
 
 view_files.forEach(file => {
 
-    const id = path.basename(file, path.extname(file));
+    const id = `zombi_view_${path.basename(file, path.extname(file))}`;
 
     const view_html_code = fs.readFileSync(file, 'utf8').toString();
 
-    views += `<div id="${id}">${view_html_code}</div>`;
+    views += `<div id="${id}" class="zombi_view">${view_html_code}</div>`;
 
 });
 
@@ -104,7 +104,7 @@ module.exports = {
             template: "./src/login.html"
         }),
         new MiniCssExtractPlugin({
-            filename: "bundle.css"
+            filename: "[name].bundle.css"
         }),
         new CopyWebpackPlugin([
             { from: './src/img', to: 'img' }

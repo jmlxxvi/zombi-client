@@ -9,18 +9,26 @@
 
 <body>
 
-    <div id="flash_message" class="opacity-0 transition-opacity duration-300 absolute top-0 right-0 left-0 my-2 mx-4 sm:mx-4 md:mx-16 lg:mx-20 xl:mx-20 border px-4 py-3 rounded bg-red-100 text-red-700 border-red-400" role="alert">
-        <strong class="font-bold flash_title"></strong>
-        <span class="block sm:inline mr-6 flash_text"></span>
-        <span class="cursor-pointer absolute top-0 bottom-0 right-0 px-4 py-3 flash_close">
-          <svg class="fill-current h-6 w-6 flash_close" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-        </span>
-      </div>
+    <div id="flash_message"
+        class="flex items-center justify-center hidden absolute top-0 right-0 left-0 my-2 mx-4 sm:mx-4 md:mx-16 lg:mx-20 xl:mx-20 border px-4 py-3 rounded z-50"
+        role="alert">
+        <div>
+            <strong class="font-bold flash_title"></strong>
+            <span class="block sm:inline mr-6 flash_text"></span>
+            <span class="cursor-pointer absolute top-0 bottom-0 right-0 px-4 py-3 flash_close">
+                <svg class="fill-current h-6 w-6 flash_close" role="button" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    </div>
 
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full">
             <div>
-                <!-- <img class="mx-auto h-12 w-auto" src="/img/logos/workflow-mark-on-white.svg" alt="Workflow" /> -->
                 <div class="text-center">
                     <span class="text-3xl" style="font-family: 'MontserratSubrayada'">Zombi</span>
                 </div>
@@ -29,7 +37,7 @@
                 <input type="hidden" name="remember" value="true" />
                 <div class="rounded-md shadow-sm">
                     <div>
-                        <input aria-label="Username" id="username" type="username" required
+                        <input aria-label="Username" id="username" type="username" required value="system"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
                             placeholder="Username" />
                     </div>
@@ -56,8 +64,6 @@
                         </a>
                     </div>
                 </div> -->
-
-
 
                 <div class="mt-6">
                     <button id="login_button"
@@ -89,7 +95,6 @@
                     <a href="#" class="lang_select_link flex-1 text-center" data-lang="he">עברית</a>
                     <a href="#" class="lang_select_link flex-1 text-center" data-lang="zh">中文</a>
                     <a href="#" class="lang_select_link flex-1 text-center" data-lang="ru">Русский</a></div>
-                </div>
             </div>
         </div>
     </div>

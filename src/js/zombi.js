@@ -17,36 +17,22 @@ const _local_storage = (key, value) => {
 	else { localStorage.setItem(key, value); }
 };
 
+const _log_time = () => {
+	return (new Date().toISOString().split("T")[1]).replace("Z", "");
+};
+
 const ZOMBI = {
 
-	_log_time() {
-
-		return (new Date().toISOString().split("T")[1]).replace("Z", "");
-
-	},
-
 	log(message, context = "UNKNOWN") {
+		const time = _log_time();
 
-		const time = ZOMBI._log_time();
-
-		if (config.CONSOLE_LOG_ENABLED) {
-
-			console.log(`${time} ${context}: ${message}`);
-
-		}
-
+		if (config.CONSOLE_LOG_ENABLED) { console.log(`${time} ${context}: ${message}`); }
 	},
 
 	error(message, context = "UNKNOWN") {
+		const time = _log_time();
 
-		const time = ZOMBI._log_time();
-
-		if (config.CONSOLE_LOG_ENABLED) {
-
-			console.error(`${time} ${context}: ${message}`);
-
-		}
-
+		if (config.CONSOLE_LOG_ENABLED) { console.error(`${time} ${context}: ${message}`); }
 	},
 
 	sequence() { return seq++; },
@@ -109,7 +95,7 @@ const ZOMBI = {
 
 					let url;
 
-					if (!config.SERVER_SOCK_HOST || config.SERVER_SOCK_HOST === null) {
+					if (!!config.SERVER_SOCK_HOST) {
 
 						const protocol = (location.protocol === "http:") ? "ws:" : "wss:";
 
@@ -222,8 +208,6 @@ const ZOMBI = {
 
 		const url = config.SERVER_HTTP_HOST ? `${config.SERVER_HTTP_HOST}${config.SERVER_PATH}` : config.SERVER_PATH;
 
-		// console.log(merged);
-
 		fetch(url, {
 			method: 'POST',
 			mode: 'cors', // no-cors, *cors, same-origin
@@ -237,8 +221,8 @@ const ZOMBI = {
 			body: JSON.stringify(merged),
 		})
 			.then(response => {
-				
-				if(response.status === 200) { return response.json(); } 
+				if(response.status === 204) { return false; } // Response from OPTIONS preflight
+				else if(response.status === 200 || response.status === 500) { return response.json(); } 
 				else {
 					if (typeof callback === "function") {
 						callback({
@@ -258,11 +242,11 @@ const ZOMBI = {
 				if(response !== false) {
 
 					if (
+						typeof response === "undefined" ||
+						typeof response.error === "undefined" ||
+						typeof response.code === "undefined" ||
 						typeof response.data === "undefined" ||
-						typeof response.data.error === "undefined" ||
-						typeof response.data.code === "undefined" ||
-						typeof response.data.data === "undefined" ||
-						typeof response.data.message === "undefined"
+						typeof response.message === "undefined"
 					) {
 	
 						if (typeof callback === "function") {
@@ -276,21 +260,14 @@ const ZOMBI = {
 	
 					} else {
 	
-						if (response.data.code === 1001) {
-	
-							ZOMBI.radio.emit("ZOMBI_SERVER_SESSION_EXPIRED");
-	
-						} else {
-	
-							if (typeof callback === "function") { callback(response.data); }
-	
-						}
+						if (response.code === 1001) { ZOMBI.radio.emit("ZOMBI_SERVER_SESSION_EXPIRED"); } 
+						else { if (typeof callback === "function") { callback(response); } }
 	
 					}
 
 				} 
 
-				ZOMBI.radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response: response.data });
+				ZOMBI.radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response });
 			})
 			.catch((error) => {
 
@@ -312,86 +289,6 @@ const ZOMBI = {
 			});
 
 		return merged;
-
-		// axios({
-		// 	method: 'post',
-		// 	url,
-		// 	data: JSON.stringify(merged),
-		// 	responseType: 'json',
-		// 	responseEncoding: 'utf8',
-		// 	headers: { 'Content-Type': 'application/json' },
-		// 	validateStatus: () => { return true; } // Zombi doesn't care about HTTP codes that much
-		// }).then((response) => {
-
-		// 	if (
-		// 		typeof response.data === "undefined" ||
-		// 		typeof response.data.error === "undefined" ||
-		// 		typeof response.data.code === "undefined" ||
-		// 		typeof response.data.data === "undefined" ||
-		// 		typeof response.data.message === "undefined"
-		// 	) {
-
-		// 		if (typeof callback === "function") {
-		// 			callback({
-		// 				error: true,
-		// 				code: 602,
-		// 				message: `Malformed response from server`,
-		// 				data: null
-		// 			});
-		// 		}
-
-		// 	} else {
-
-		// 		if (response.data.code === 1001) {
-
-		// 			ZOMBI.radio.emit("ZOMBI_SERVER_SESSION_EXPIRED");
-
-		// 		} else {
-
-		// 			if (typeof callback === "function") { callback(response.data); }
-
-		// 		}
-
-		// 	}
-
-		// 	ZOMBI.radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response: response.data });
-
-		// }).catch(error => {
-
-		// 	if (error.request) { // The request was made but no response was received. `error.request` is an instance of XMLHttpRequest
-
-		// 		if (typeof callback === "function") {
-		// 			callback({
-		// 				error: true,
-		// 				code: 600,
-		// 				message: `Server error: ${error.message}`,
-		// 				data: null
-		// 			});
-		// 		}
-
-		// 		ZOMBI.radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response: `Server error: ${error.message}` });
-
-		// 	} else { // Something happened in setting up the request that triggered an Error
-
-		// 		if (typeof callback === "function") {
-		// 			callback({
-		// 				error: true,
-		// 				code: 601,
-		// 				message: `Request error`,
-		// 				data: null
-		// 			});
-		// 		}
-
-		// 		ZOMBI.radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response: `Request error: ${error.message}` });
-		// 	}
-
-		// }).then(() => { // This extra .then() works the same way as jquery's "always"
-
-		// 	ZOMBI.radio.emit("ZOMBI_SERVER_CALL_FINISH", [merged.mod, merged.fun]);
-
-		// });
-
-		// return merged;
 
 	},
 
@@ -427,7 +324,7 @@ const ZOMBI = {
 
 		emit(station, music = null) {
 
-			const sequence = ZOMBI.sequence();
+			// const sequence = ZOMBI.sequence();
 
 			if (!radio_stations[station]) {
 
@@ -448,7 +345,7 @@ const ZOMBI = {
 
 					const who_is_listening = (subscribers[len].listener === null) ? subscribers[len].radio_device_id : subscribers[len].listener;
 
-					ZOMBI.log(`Station ${station} is emiting the music ${music} to receptor ${who_is_listening}`, "RADIO");
+					ZOMBI.log(`Station ${station} is emiting the music ${JSON.stringify(music)	} to receptor ${who_is_listening}`, "RADIO");
 
 				}
 
@@ -533,12 +430,6 @@ const ZOMBI = {
 				byteArrays[sliceIndex] = new Uint8Array(bytes);
 			}
 			return new Blob(byteArrays, { type: contentType });
-		},
-
-		is_object(thing) {
-
-			return thing && typeof thing === 'object' && thing.constructor === Object;
-
 		}
 
 	},
@@ -546,16 +437,3 @@ const ZOMBI = {
 };
 
 export default ZOMBI;
-
-
-/*
-    Axios Response Schema
-    {
-        data: {}, // `data` is the response that was provided by the server
-        status: 200, // `status` is the HTTP status code from the server response
-        statusText: 'OK', // `statusText` is the HTTP status message from the server response
-        headers: {}, //`headers` the headers that the server responded with. All header names are lower cased
-        config: {}, // `config` is the config that was provided to `axios` for the request
-        request: {} // `request` is the request that generated this response (XMLHttpRequest instance the browser)
-    }
-*/

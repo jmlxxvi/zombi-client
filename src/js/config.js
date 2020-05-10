@@ -1,13 +1,13 @@
 export default {
 	"DEFAULT_LANGUAGE": "en",
 	"DEFAULT_TIMEZONE": "America/Argentina/Buenos_Aires",
-	"SERVER_HTTP_HOST": "",
-	"SERVER_SOCK_HOST": "",
+	"SERVER_HTTP_HOST": "http://localhost:10000",
+	"SERVER_SOCK_HOST": "http://localhost:10000",
 	"SERVER_PATH": "/server",
 	"CONSOLE_LOG_ENABLED": true,
 	"LANDING_VIEW": "home",
 	"SOCKETS_RECCONNECT_TIME": 2000,
-	"SOCKETS_CONNECT_ENABLED": true
+	"SOCKETS_CONNECT_ENABLED": false
 };
 
 

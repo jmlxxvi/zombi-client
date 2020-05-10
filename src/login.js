@@ -5,20 +5,6 @@ import ZOMBI from "./js/zombi";
 import app from "./js/app";
 import $ from "./js/dom";
 
-// const languages = [
-//     { code: "es", name: "Español" },
-//     { code: "pt", name: "Português" },
-//     { code: "en", name: "English" },
-//     { code: "fr", name: "Français" },
-//     { code: "de", name: "Deutsch" },
-//     { code: "it", name: "Italiano" },
-//     { code: "ko", name: "한국어" },
-//     { code: "ja", name: "日本語" },
-//     { code: "he", name: "עברית" },
-//     { code: "ru", name: "Русский" },
-//     { code: "zh", name: "中文" }
-// ];
-
 const i18n_labels = {
     es: { LOGIN: "Ingresar", USERNAME: "Usuario", PASSWORD: "Contraseña", NOLOGIN: "Nombre de usuario o clave incorrectos" },
     en: { LOGIN: "Login", USERNAME: "Username", PASSWORD: "Password", NOLOGIN: "Incorrect username or password" },
@@ -33,13 +19,11 @@ const i18n_labels = {
     zh: { LOGIN: "登录", USERNAME: "用户名", PASSWORD: "密码", NOLOGIN: "用户名或密码错误" }
 };
 
-let selected_language = config.DEFAULT_LANGUAGE;
+const saved_lang = ZOMBI.language();
 
-$(".lang_select_link").each(item => {
+let selected_language = saved_lang === null ? config.DEFAULT_LANGUAGE : saved_lang;
 
-    $(item).addClass("text-gray-500");
-
-});
+$(".lang_select_link").each(item => { $(item).addClass("text-gray-500"); });
 
 $(".lang_select_link").on("click", function (event) {
     event.preventDefault();
@@ -58,35 +42,36 @@ const set_lang = lang => {
         $(item).removeClass("text-blue-600");
         $(item).addClass("text-gray-500");
 
-        if(lang === item.dataset.lang) {
-            $(item).addClass("text-blue-600");
-        }
+        if(lang === item.dataset.lang) { $(item).addClass("text-blue-600"); }
     });
 };
 
 set_lang(selected_language);
 
-$("#login_button").on("click", () => {
+$("#password").on("keyup", event => { if (event.which === 13) { $("#login_button").click(); } });
 
-    // ZOMBI.server(
-    //     ["system/login", "login", ["system", "thelord", "es"]],
-    //     response => {
-    //         console.log(response);
-    //     }
-    // );
+$("#login_button").on("click", event => {
+    event.preventDefault();
 
-    app.flash({ message: "wwevwefwee", title: "WTF!?" });
+    const password = $("#password").val();
+    const username = $("#username").val();
 
-    // $("#flash_message").removeClass("opacity-0");
-    // // $("#flash_message").addClass("opacity-100");
+    // app.flash({ message: "if (response.code === 1004) { app.flash({ message: i18n_labels[selected_language][", title: "Warning!: " });
 
-    // $("#flash_message > .font-bold").addClass("text-blue-900");
+    ZOMBI.server(
+        ["system/login", "login", [username, password, selected_language]],
+        response => {
+            if (response.error) {
+                if (response.code === 1004) { app.flash({ message: i18n_labels[selected_language]["NOLOGIN"] }); }
+                else { app.flash({ message: response.message }); }
+            } else {
+                ZOMBI.token(response.data.token);
+                ZOMBI.language(selected_language);
 
+                window.location.replace("index.html");
+            }
+        }
+    );
 });
 
-$(".flash_close").on("click", () => {
-
-    $("#flash_message").addClass("opacity-0");
-
-});
 

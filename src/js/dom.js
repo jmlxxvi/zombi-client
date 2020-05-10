@@ -8,6 +8,12 @@ const dom = function (s) {
 };
 
 dom.prototype = {
+    click: function() {
+        this.value[0].click();
+    },
+    val: function(v) {
+        return (typeof v == 'undefined') ? this.value[0].value : this.value[0].value = v;
+    },
     eq: function (n) {
         this.value = [this.value[n]];
         return this;
