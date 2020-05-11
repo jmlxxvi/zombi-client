@@ -3,292 +3,314 @@
 import { DateTime } from "luxon";
 
 import config from "./config";
-import ZOMBI from "./zombi";
+import * as ZOMBI from "./zombi";
 import $ from "./dom";
 
-
+import views from "./views";
 
 var i18n_data;
 
 let flash_timeout;
 
-$(".flash_close").on("click", () => {
+$("#flash_message").on("click", () => { $("#flash_message").addClass("hidden"); });
 
-    $("#flash_message").addClass("hidden");
+const flash = (args) => {
 
-});
+	let message, severity, title;
 
-const INDEX = (() => {
+	if (typeof args === "string") {
 
-	return {
+		message = args;
+		severity = "error";
+		title = ""
 
-		utils: {
+	} else {
 
-			// https://stackoverflow.com/a/46955619
-			to_unicode(text) {
-				const span = document.createElement('span');
+		message = args.message ? args.message : "";
+		severity = args.severity ? args.severity : "error";
+		title = args.title ? args.title : "";
 
-				return text
-					.replace(/&[#A-Za-z0-9]+;/gi, (entity, position, text) => {
-						span.innerHTML = entity;
-						return span.innerText;
-					});
-			},
+	}
 
-			escape_for_html(text) {
+	clearTimeout(flash_timeout);
 
-				if (text && typeof text.replace === "function") {
+	const timeout = severity === "error" ? 6000 : 10000;
+	const color = severity === "error" ? "red" : "green";
 
-					var map = {
-						'&': '&amp;',
-						'<': '&lt;',
-						'>': '&gt;',
-						'"': '&quot;',
-						"'": '&#039;'
-					};
+	$("#flash_message").addClass(`bg-${color}-100`);
+	$("#flash_message").addClass(`text-${color}-700`);
+	$("#flash_message").addClass(`border-${color}-400`);
 
-					return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+	$("#flash_message").removeClass("hidden");
 
-				} else { return text; }
+	$("#flash_message .flash_text").text(message);
+	$("#flash_message .flash_title").text(title);
 
-			}
+	flash_timeout = setTimeout(() => { $("#flash_message").addClass("hidden"); }, timeout);
+};
 
-		},
+const utils = {
 
-		i18n: {
-			format_number: function (number, precision = 2, currency = false) {
-				// Reference: https://numbrojs.com/format.html
-				numbro.setLanguage(ZOMBI.language());
+	// https://stackoverflow.com/a/46955619
+	to_unicode(text) {
+		const span = document.createElement('span');
 
-				if (currency) {
-					return numbro(number).format({ thousandSeparated: true, mantissa: precision });
-				} else {
-					return numbro(number).formatCurrency({ mantissa: precision });
+		return text
+			.replace(/&[#A-Za-z0-9]+;/gi, (entity, position, text) => {
+				span.innerHTML = entity;
+				return span.innerText;
+			});
+	},
+
+	escape_for_html(text) {
+
+		if (text && typeof text.replace === "function") {
+
+			var map = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#039;'
+			};
+
+			return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+
+		} else { return text; }
+
+	}
+
+};
+
+const i18n = {
+
+	format_number: function (number, precision = 2, currency = false) {
+		// Reference: https://numbrojs.com/format.html
+		numbro.setLanguage(ZOMBI.language());
+
+		if (currency) {
+			return numbro(number).format({ thousandSeparated: true, mantissa: precision });
+		} else {
+			return numbro(number).formatCurrency({ mantissa: precision });
+		}
+	},
+	utc2timeago(timestamp) {
+		return DateTime.fromSeconds(timestamp, { zone: ZOMBI.timezone(), locale: ZOMBI.language() }).toRelative();
+	},
+	utc2local(timestamp, format = DateTime.DATE_SHORT) {
+		// https://moment.github.io/luxon/docs/manual/formatting.html
+		return DateTime.fromSeconds(timestamp, { zone: ZOMBI.timezone(), locale: ZOMBI.language() }).toLocaleString(format);
+	},
+
+	init(data, apply) {
+
+		i18n_data = data;
+
+		if (apply === true) { i18n.apply(); }
+
+	},
+
+	label(name, replace, transform) {
+
+		let i, repl;
+
+		if (!replace) { repl = []; }
+		else { repl = (Array.isArray(replace)) ? replace : [replace]; }
+
+		let label;
+
+		if (i18n_data && i18n_data[name]) {
+
+			label = i18n_data[name];
+
+			for (i = 1; i <= repl.length; i++) { label = label.split("{" + i + "}").join(repl[i - 1]); }
+
+			if (typeof transform === "function") { label = transform(label, n); }
+
+		} else { label = "[" + name + "]"; }
+
+		return utils.escape_for_html(label);
+
+	},
+
+	apply() {
+		$(".i18n").each(item => {
+			const word = $(item).html();
+
+			if (word) { $(item).html(i18n.label(word)); }
+		});
+	}
+};
+
+
+const router = {
+	go(path) { window.location.replace(`#/${path}`); },
+	navigate() {
+
+		ZOMBI.log("AHOY sailor!!", "ROUTER");
+
+		if (!location.hash) {
+			ZOMBI.log(`Navigating to default route: ${config.LANDING_VIEW}`, "ROUTER");
+			location.hash = `#/${config.LANDING_VIEW}`;
+			return false;
+		}
+
+		const hash = location.hash.substr(1);
+		const components = hash.split("/");
+		const fragment = components.shift();
+		const view = components.shift();
+		const params = [...components];
+		const view_id = `zombi_view_${view}`;
+
+		if (router.check(view)) {
+
+			$('.zombi_view').each(item => { $(item).addClass('hidden'); });
+
+			$(`#${view_id}`).removeClass("hidden");
+
+			ZOMBI.radio.emit("ZOMBI_SERVER_ROUTE_CHANGED", { fragment, view, params });
+
+			if(views[view] && typeof views[view].render === "function") {
+				views[view].render(view, params, fragment);
+			} else { ZOMBI.log(`View ${view} does not implement render()`, "ROUTER"); }
+
+			Object.keys(views).forEach(key => {
+				if(key !== view && views[key] && typeof views[key].hide === "function") {
+					views[key].hide(view, params, fragment);
 				}
-			},
-			utc2timeago(timestamp) {
-				return DateTime.fromSeconds(timestamp, { zone: ZOMBI.timezone(), locale: ZOMBI.language() }).toRelative();
-			},
-			utc2local(timestamp, format = DateTime.DATE_SHORT) {
-				// https://moment.github.io/luxon/docs/manual/formatting.html
-
-
-				return DateTime.fromSeconds(timestamp, { zone: ZOMBI.timezone(), locale: ZOMBI.language() }).toLocaleString(format);
-			},
-
-			init(data, apply) {
-
-				i18n_data = data;
-
-				if (apply === true) { INDEX.i18n.apply(); }
-
-			},
-
-			label(name, replace, transform) {
-
-				let i, repl;
-
-				if (!replace) { repl = []; }
-				else { repl = (Array.isArray(replace)) ? replace : [replace]; }
-
-				let label;
-
-				if (i18n_data && i18n_data[name]) {
-
-					label = i18n_data[name];
-
-					for (i = 1; i <= repl.length; i++) { label = label.split("{" + i + "}").join(repl[i - 1]); }
-
-					if (typeof transform === "function") { label = transform(label, n); }
-
-				} else { label = "[" + name + "]"; }
-
-				return INDEX.utils.escape_for_html(label);
-
-			},
-
-			apply() { 
-				$(".i18n").each(item => { 
-					const word = $(item).html();
-
-					if(word) { $(item).html(INDEX.i18n.label(word)); }
-				});
-			}
-		},
-
-		flash({ message, severity = "error", title = "" }) {
-			clearTimeout(flash_timeout);
-
-			const timeout = severity === "error" ? 6000 : 10000;
-			const color = severity === "error" ? "red" : "green";
-
-			$("#flash_message").addClass(`bg-${color}-100`);
-			$("#flash_message").addClass(`text-${color}-700`);
-			$("#flash_message").addClass(`border-${color}-400`);
-
-			$("#flash_message").removeClass("hidden");
-
-			$("#flash_message .flash_text").text(message);
-			$("#flash_message .flash_title").text(title);
-
-			flash_timeout = setTimeout(() => { $("#flash_message").addClass("hidden"); }, timeout);
-		},
-
-		router: {
-			navigate() {
-				ZOMBI.log("AHOY sailor!!", "ROUTER");
-
-				if (!location.hash) { location.hash = `#/${config.LANDING_VIEW}`; return false; }
-
-				const hash = location.hash.substr(1);
-				const components = hash.split("/");
-				const fragment = components[0];
-				const view = components[1];
-				const view_id = `zombi_view_${view}`;
-				const params = [];
-
-				for (let i = 2, l = components.length; i < l; i++) { params.push(components[i]); };
-
-				if (INDEX.router.check(view)) {
-
-					$('.zombi_view').each(item => { $(item).addClass('hidden'); });
-
-					$(`#${view_id}`).removeClass("hidden");
-
-					ZOMBI.radio.emit("ZOMBI_SERVER_ROUTE_CHANGED", { fragment, view, params });
-
-				}
-
-			},
-
-			// In the future we may want to check permissions
-			check(view, params) { return true; },
-		},
-		wipe_local_data() {
-			ZOMBI.token(null);
-			ZOMBI.fullname(null);
-			ZOMBI.timezone(null);
-			//ZOMBI.language(null); // We keep lang so the user get the login page on his language
-		},
-		logoff(server = true) {
-			if (server) {
-				// If server isn't fast enough we leave anyway
-				setTimeout(() => { window.location.replace("login.html"); }, 2000);
-
-				ZOMBI.server(
-					["system/login", "logoff"],
-					() => {
-						INDEX.wipe_local_data();
-						ZOMBI.ws.close();
-						window.location.replace("login.html");
-					}
-				);
-			} else {
-				INDEX.wipe_local_data();
-				window.location.replace("login.html");
-			}
-
-		},
-		overlay: {
-			hide() { $('.overlay_spinner').addClass("hidden"); },
-			show() { $('.overlay_spinner').removeClass("hidden"); },
-		},
-
-		// load_modal(modal) {
-
-		// 	$('#index_popup_modal_content').load("modals/" + modal + ".html", (response, status, xhr) => {
-
-		// 		if (status == "error") { INDEX.flash(INDEX.i18n.label("ERROR_LOADING_MODAL_WINDOW")); }
-
-		// 		else { $('#index_popup_modal').modal(); }
-
-		// 	});
-
-		// },
-
-		// close_modal() { $('#index_popup_modal').modal("hide"); },
-
-		// select(node, source, filter, empty, selected) {
-
-		// 	const empty_data = (empty && Array.isArray(empty) && empty.length === 2) ? empty : null;
-
-		// 	const [mod, fun] = source.split(":");
-
-		// 	const element = document.getElementById(node);
-
-		// 	element.innerHTML = "";
-
-		// 	ZOMBI.server(
-		// 		[mod, fun, filter],
-
-		// 		response => {
-
-		// 			if (response.error) { INDEX.flash(response.message); }
-
-		// 			else {
-
-		// 				const elements = response.data
-
-		// 				if (empty_data !== null) {
-
-		// 					const option = document.createElement('option');
-
-		// 					option.value = empty_data[0];
-		// 					option.text = empty_data[1];
-
-		// 					element.add(option);
-
-		// 				}
-
-		// 				for (const s of elements) {
-
-		// 					const option = document.createElement('option');
-
-		// 					option.value = s[0];
-		// 					option.text = s[1];
-
-		// 					if (s[0] == selected) { option.selected = true; }
-
-		// 					element.add(option);
-
-		// 				}
-
-		// 			}
-
-		// 		}
-
-		// 	);
-
-		// },
-
-		// TODO implement this
-		change_password(current, typed, retiped) {
-
-			ZOMBI.server(
-				["system/login", "reset_password", [current, typed, retiped]],
-				response => {
-
-					if (response.error) {
-
-						console.log(response.message);
-
-					} else {
-
-						console.log(JSON.stringify(response));
-
-					}
-
-				}
-
-			);
+			});
 
 		}
 
-	};
+	},
 
-})();
+	// In the future we may want to check permissions
+	check(view, params) { return true; },
+};
 
-export default INDEX;
+const logoff = (server = true) => {
+	if (server) {
+		// If server isn't fast enough we leave anyway
+		setTimeout(() => { window.location.replace("login.html"); }, 2000);
+
+		ZOMBI.server(
+			["system/login", "logoff"],
+			() => {
+				ZOMBI.wipe_user_data();
+				ZOMBI.ws.close();
+				window.location.replace("login.html");
+			}
+		);
+	} else {
+		ZOMBI.wipe_user_data();
+		window.location.replace("login.html");
+	}
+
+};
+
+const overlay = {
+	hide() { $('.overlay_spinner').addClass("hidden"); },
+	show() { $('.overlay_spinner').removeClass("hidden"); },
+};
+
+export { flash, utils, i18n, router, logoff, overlay };
+
+
+
+	// load_modal(modal) {
+
+	// 	$('#index_popup_modal_content').load("modals/" + modal + ".html", (response, status, xhr) => {
+
+	// 		if (status == "error") { flash(i18n.label("ERROR_LOADING_MODAL_WINDOW")); }
+
+	// 		else { $('#index_popup_modal').modal(); }
+
+	// 	});
+
+	// },
+
+	// close_modal() { $('#index_popup_modal').modal("hide"); },
+
+	// select(node, source, filter, empty, selected) {
+
+	// 	const empty_data = (empty && Array.isArray(empty) && empty.length === 2) ? empty : null;
+
+	// 	const [mod, fun] = source.split(":");
+
+	// 	const element = document.getElementById(node);
+
+	// 	element.innerHTML = "";
+
+	// 	ZOMBI.server(
+	// 		[mod, fun, filter],
+
+	// 		response => {
+
+	// 			if (response.error) { flash(response.message); }
+
+	// 			else {
+
+	// 				const elements = response.data
+
+	// 				if (empty_data !== null) {
+
+	// 					const option = document.createElement('option');
+
+	// 					option.value = empty_data[0];
+	// 					option.text = empty_data[1];
+
+	// 					element.add(option);
+
+	// 				}
+
+	// 				for (const s of elements) {
+
+	// 					const option = document.createElement('option');
+
+	// 					option.value = s[0];
+	// 					option.text = s[1];
+
+	// 					if (s[0] == selected) { option.selected = true; }
+
+	// 					element.add(option);
+
+	// 				}
+
+	// 			}
+
+	// 		}
+
+	// 	);
+
+	// },
+
+	// TODO implement this
+	// change_password(current, typed, retiped) {
+
+	// 	ZOMBI.server(
+	// 		["system/login", "reset_password", [current, typed, retiped]],
+	// 		response => {
+
+	// 			if (response.error) {
+
+	// 				console.log(response.message);
+
+	// 			} else {
+
+	// 				console.log(JSON.stringify(response));
+
+	// 			}
+
+	// 		}
+
+	// 	);
+
+	// }
+
+
+// };
+
+// export default INDEX;
 
 
 /*

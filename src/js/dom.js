@@ -144,6 +144,11 @@ dom.prototype = {
           child !== this.value[0]);
         return this;
     },
+    children: function () {
+        this.value = Array.prototype.filter.call(this.value[0].children, (child) =>
+          child !== this.value[0]);
+        return this;
+    },
     offset: function () {
         return this.each(function (i) {
             offset = i.getBoundingClientRect();

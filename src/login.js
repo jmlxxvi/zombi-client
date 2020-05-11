@@ -1,8 +1,8 @@
 import "./css/styles.css";
 
 import config from "./js/config";
-import ZOMBI from "./js/zombi";
-import app from "./js/app";
+import * as ZOMBI from "./js/zombi";
+import { flash } from "./js/app";
 import $ from "./js/dom";
 
 const i18n_labels = {
@@ -56,14 +56,16 @@ $("#login_button").on("click", event => {
     const password = $("#password").val();
     const username = $("#username").val();
 
-    // app.flash({ message: "if (response.code === 1004) { app.flash({ message: i18n_labels[selected_language][", title: "Warning!: " });
+    console.log(flash)
+
+    // flash({ message: "if (response.code === 1004) { flash({ message: i18n_labels[selected_language][", title: "Warning!: " });
 
     ZOMBI.server(
         ["system/login", "login", [username, password, selected_language]],
         response => {
             if (response.error) {
-                if (response.code === 1004) { app.flash({ message: i18n_labels[selected_language]["NOLOGIN"] }); }
-                else { app.flash({ message: response.message }); }
+                if (response.code === 1004) { flash({ message: i18n_labels[selected_language]["NOLOGIN"] }); }
+                else { flash({ message: response.message }); }
             } else {
                 ZOMBI.token(response.data.token);
                 ZOMBI.language(selected_language);

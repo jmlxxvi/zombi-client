@@ -10,12 +10,12 @@
 <body class="relative">
 
     <div id="flash_message"
-        class="flex items-center justify-center hidden absolute top-0 right-0 left-0 my-2 mx-4 sm:mx-4 md:mx-16 lg:mx-20 xl:mx-20 border px-4 py-3 rounded z-50"
+        class="cursor-pointer flex items-center justify-center hidden absolute top-0 right-0 left-0 my-2 mx-4 sm:mx-4 md:mx-16 lg:mx-20 xl:mx-20 border px-4 py-3 rounded z-50"
         role="alert">
         <div>
             <strong class="font-bold flash_title"></strong>
             <span class="block sm:inline mr-6 flash_text"></span>
-            <span class="cursor-pointer absolute top-0 bottom-0 right-0 px-4 py-3 flash_close">
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3 flash_close">
                 <svg class="fill-current h-6 w-6 flash_close" role="button" xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20">
                     <title>Close</title>
@@ -41,17 +41,17 @@
                             <span class="text-2xl text-gray-300" style="font-family: 'MontserratSubrayada'">Zombi</span>
                         </div>
                         <div class="hidden md:block">
-                            <div class="ml-10 flex items-baseline">
-                                <a href="#"
-                                    class="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700 i18n">CONSOLE</a>
-                                <a href="#"
-                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Team</a>
-                                <a href="#"
-                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Projects</a>
-                                <a href="#"
-                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Calendar</a>
-                                <a href="#"
-                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Reports</a>
+                            <div class="index_navbar_menu ml-10 flex items-baseline">
+                                <a href="#/console"
+                                    class="     px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:text-white focus:bg-gray-700 i18n">CONSOLE</a>
+                                <a href="#/labels"
+                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:text-white focus:bg-gray-700 i18n">LABELS</a>
+                                <a href="#/users"
+                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:text-white focus:bg-gray-700 i18n">USERS</a>
+                                <a href="#/groups"
+                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:text-white focus:bg-gray-700 i18n">SESSIONS</a>
+                                <a href="#/sessions"
+                                    class="ml-4 px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:text-white focus:bg-gray-700 i18n">GROUPS</a>
                             </div>
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                                         class="index_dropdown_profile relative z-30 max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid"
                                         id="user-menu" aria-label="User menu" aria-haspopup="true">
                                         <img class="h-8 w-8 rounded-full" src="img/avatar-placeholder-180x180@2x.gif"
-                                            alt="" />
+                                            alt="User Avatar" />
                                     </button>
                                     <button id="index_dropdown_profile_close" tabindex="-1"
                                         class="hidden fixed inset-0 h-full w-full bg-gray-200 opacity-25 cursor-default"></button>
@@ -104,7 +104,7 @@
                                     class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
                                     <div class="py-1 rounded-md bg-white shadow-xs" role="menu"
                                         aria-orientation="vertical" aria-labelledby="user-menu">
-                                        <a href="#"
+                                        <a href="#/settings"
                                             class="index_dropdown_profile block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                             role="menuitem">Your
                                             Profile</a>
@@ -122,7 +122,7 @@
                     <div class="-mr-2 flex md:hidden">
                         <!-- Mobile menu button -->
                         <button
-                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white">
+                            class="index_mobile_hamburguer inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white">
                             <!-- Menu open: "hidden", Menu closed: "block" -->
                             <svg class="block h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -143,7 +143,7 @@
       
             Open: "block", closed: "hidden"
           -->
-            <div class="hidden md:hidden">
+            <div class="index_mobile_menu hidden md:hidden">
                 <div class="px-2 pt-2 pb-3 sm:px-3">
                     <a href="#"
                         class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Dashboard</a>
@@ -159,13 +159,12 @@
                 <div class="pt-4 pb-3 border-t border-gray-700">
                     <div class="flex items-center px-5">
                         <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full"
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                alt="" />
+                            <img class="h-8 w-8 rounded-full" src="img/avatar-placeholder-180x180@2x.gif"
+                                alt="User Avatar" />
                         </div>
                         <div class="ml-3">
-                            <div class="text-base font-medium leading-none text-white">Tom Cook</div>
-                            <div class="mt-1 text-sm font-medium leading-none text-gray-400">tom@example.com</div>
+                            <div class="index_profile_username text-base font-medium leading-none text-white"></div>
+                            <div class="index_profile_email mt-1 text-sm font-medium leading-none text-gray-400"></div>
                         </div>
                     </div>
                     <div class="mt-3 px-2">
@@ -182,28 +181,12 @@
             </div>
         </nav>
 
-        <header class="bg-white shadow">
-            <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold leading-tight text-gray-900">
-                    Dashboard
-                </h1>
-            </div>
-        </header>
         <main>
-            <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <!-- Replace with your content -->
-                <div class="px-4 sm:px-0">
-
-
-
-
-                    <!-- Views  -->
-                    <div class="max-w-6xl mx-auto">
-                        <%= htmlWebpackPlugin.options.views %>
-                    </div>
-
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <!-- Views  -->
+                <div class="max-w-6xl mx-auto">
+                    <%= htmlWebpackPlugin.options.views %>
                 </div>
-                <!-- /End replace -->
             </div>
         </main>
     </div>

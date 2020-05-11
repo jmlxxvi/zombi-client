@@ -5,8 +5,8 @@ import "./css/styles.css";
 // import "regenerator-runtime/runtime";
 
 import config from "./js/config";
-import ZOMBI from "./js/zombi";
-import app from "./js/app";
+import * as ZOMBI from "./js/zombi";
+import * as app from "./js/app";
 import $ from "./js/dom";
 
 ZOMBI.radio.turnon("ZOMBI_SERVER_CALL_START", () => { $(".index_spinner_icon").removeClass("hidden"); }, "SPINNER_LISTENER_INDEX");
@@ -26,10 +26,28 @@ ZOMBI.radio.turnon(
     "SESSION_EXPIRE_LISTENER"
 );
 
+
+
+ZOMBI.radio.turnon(
+    "ZOMBI_SERVER_ROUTE_CHANGED",
+    ({ fragment, view, params }) => {
+        $(".index_navbar_menu").children().each(item => {
+            const item_view = ($(item).getAttr("href")).split("/")[1];
+
+            if(item_view && item_view === view) {
+                $(item).addClass("text-white bg-gray-900");
+                $(item).removeClass("text-gray-300 hover:text-white hover:bg-gray-700");
+            } else {
+                $(item).removeClass("text-white bg-gray-900");
+                $(item).addClass("text-gray-300 hover:text-white hover:bg-gray-700");
+            }
+        });
+    },
+    "INDEX_ROUTE_CHANGE_EVENTS"
+);
+
 ZOMBI.radio.turnon("ZOMBI_SERVER_SOCKET_CONNECTED", () => { $(".index_websockets_icon").removeClass("text-red-700"); }, "SOCKET_CONNECT_LISTENER_INDEX");
 ZOMBI.radio.turnon("ZOMBI_SERVER_SOCKET_DISCONNECTED", () => { $(".index_websockets_icon").addClass("text-red-700"); }, "SOCKET_CONNECT_LISTENER_INDEX");
-
-$(".flash_close").on("click", () => { $("#flash_message").addClass("opacity-0"); });
 
 window.addEventListener("hashchange", app.router.navigate);
 
@@ -54,19 +72,25 @@ const index_start = () => {
                 app.router.navigate();
                 app.overlay.hide();
                 ZOMBI.ws.connect(false);
+
+                $(".index_profile_username").html(response.data.fullname);
+                $(".index_profile_email").html(response.data.email);
             }
         }
     );
 };
 
 if (!ZOMBI.token()) { window.location.replace("login.html"); } 
-else { index_start(); }
+else {
+    index_start();
+
+}
 
 console.log(app.i18n.utc2local(1589063092));
 
 $(".index_dropdown_profile").on("click", event => {
 
-    event.preventDefault();
+    // event.preventDefault();
 
     $("#index_dropdown_profile_menu").toggleClass("hidden");
     $("#index_dropdown_profile_close").toggleClass("hidden");
@@ -79,6 +103,14 @@ $("#index_dropdown_profile_close").on("click", () => {
     $("#index_dropdown_profile_close").addClass("hidden");
 
 });
+
+$(".index_mobile_hamburguer").on("click", () => {
+
+    $(".index_mobile_menu").toggleClass("hidden");
+
+});
+
+
 
 // $("#sidebar .components li a").not(".dropdown-toggle").on("click", event => {
 // 	// https://tylergaw.com/articles/reacting-to-media-queries-in-javascript/

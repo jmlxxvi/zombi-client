@@ -5,7 +5,7 @@ export default {
 	"SERVER_SOCK_HOST": "http://localhost:10000",
 	"SERVER_PATH": "/server",
 	"CONSOLE_LOG_ENABLED": true,
-	"LANDING_VIEW": "home",
+	"LANDING_VIEW": "console",
 	"SOCKETS_RECCONNECT_TIME": 2000,
 	"SOCKETS_CONNECT_ENABLED": false
 };
