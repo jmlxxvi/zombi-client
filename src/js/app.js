@@ -12,6 +12,8 @@ var i18n_data;
 
 let flash_timeout;
 
+let last_view = null;
+
 $("#flash_message").on("click", () => { $("#flash_message").addClass("hidden"); });
 
 const flash = (args) => {
@@ -114,20 +116,22 @@ const i18n = {
 
 		let i, repl;
 
+		const n = name.trim();
+
 		if (!replace) { repl = []; }
 		else { repl = (Array.isArray(replace)) ? replace : [replace]; }
 
 		let label;
 
-		if (i18n_data && i18n_data[name]) {
+		if (i18n_data && i18n_data[n]) {
 
-			label = i18n_data[name];
+			label = i18n_data[n];
 
 			for (i = 1; i <= repl.length; i++) { label = label.split("{" + i + "}").join(repl[i - 1]); }
 
-			if (typeof transform === "function") { label = transform(label, n); }
+			if (typeof transform === "function") { label = transform(label); }
 
-		} else { label = "[" + name + "]"; }
+		} else { label = "[" + n + "]"; }
 
 		return utils.escape_for_html(label);
 
@@ -147,13 +151,15 @@ const router = {
 	go(path) { window.location.replace(`#/${path}`); },
 	navigate() {
 
-		ZOMBI.log("AHOY sailor!!", "ROUTER");
-
 		if (!location.hash) {
 			ZOMBI.log(`Navigating to default route: ${config.LANDING_VIEW}`, "ROUTER");
 			location.hash = `#/${config.LANDING_VIEW}`;
-			return false;
+			return true;
 		}
+
+		ZOMBI.log("AHOY sailor!!", "ROUTER");
+
+		
 
 		const hash = location.hash.substr(1);
 		const components = hash.split("/");
@@ -168,17 +174,21 @@ const router = {
 
 			$(`#${view_id}`).removeClass("hidden");
 
-			ZOMBI.radio.emit("ZOMBI_SERVER_ROUTE_CHANGED", { fragment, view, params });
+			
 
+			ZOMBI.dispatch("zombi-server-route-changed", { fragment, view, params });
+			
 			if(views[view] && typeof views[view].render === "function") {
 				views[view].render(view, params, fragment);
-			} else { ZOMBI.log(`View ${view} does not implement render()`, "ROUTER"); }
+			} else { ZOMBI.log(`View ${view} does not implement render()`, "ROUTER", true); }
 
-			Object.keys(views).forEach(key => {
-				if(key !== view && views[key] && typeof views[key].hide === "function") {
-					views[key].hide(view, params, fragment);
-				}
-			});
+			return true;
+
+			if(last_view !== null && last_view !== view && views[last_view] && typeof views[last_view].hide === "function") {
+				views[last_view].hide(view, params, fragment);
+			}
+
+			last_view = view;
 
 		}
 
@@ -213,7 +223,130 @@ const overlay = {
 	show() { $('.overlay_spinner').removeClass("hidden"); },
 };
 
-export { flash, utils, i18n, router, logoff, overlay };
+const modal = {
+
+	toggle(id) {
+		// document.getElementById(id).classList.toggle("hidden");
+		// document.getElementById(id + "-backdrop").classList.toggle("hidden");
+		$(`#${id}`).toggleClass("hidden");
+		$(".modal_backdrop").toggleClass("hidden");
+		// $(`#${id}`).toggleClass("flex");
+		// $(`#${id}-backdrop`).toggleClass("flex");
+		// document.getElementById(id).classList.toggle("flex");
+		// document.getElementById(id + "-backdrop").classList.toggle("flex");
+	},
+
+	close(id) {
+		$(".modal").addClass("hidden");
+		$(".modal_backdrop").addClass("hidden");
+	}
+
+}
+
+const _nextFrame = () => {
+	return new Promise(resolve => {
+		requestAnimationFrame(() => {
+			requestAnimationFrame(resolve);
+		});
+	});
+}
+
+const _afterTransition = element => {
+	return new Promise(resolve => {
+		const duration = Number(
+			getComputedStyle(element)
+				.transitionDuration
+				.replace('s', '')
+		) * 1000;
+
+		setTimeout(() => {
+			resolve();
+		}, duration);
+	});
+}
+
+const transitions = {
+
+	async enter(element, transition) {
+
+		element.classList.remove('hidden');
+	
+		element.classList.add(`${transition}-enter`);
+		element.classList.add(`${transition}-enter-start`);
+	
+		await _nextFrame();
+	
+		element.classList.remove(`${transition}-enter-start`);
+		element.classList.add(`${transition}-enter-end`);
+	
+		await _afterTransition(element);
+	
+		element.classList.remove(`${transition}-enter-end`);
+		element.classList.remove(`${transition}-enter`);
+	
+	
+	},
+	
+	async leave(element, transition) {
+	
+		element.classList.add(`${transition}-leave`);
+		element.classList.add(`${transition}-leave-start`);
+	
+		await _nextFrame();
+	
+		element.classList.remove(`${transition}-leave-start`);
+		element.classList.add(`${transition}-leave-end`);
+	
+		await _afterTransition(element);
+	
+		element.classList.remove(`${transition}-leave-end`);
+		element.classList.remove(`${transition}-leave`);
+	  
+		element.classList.add('hidden');
+	},
+	async modal_enter(element) {
+
+		const dom = $(element);
+
+		dom.removeClass("hidden sm:hidden");
+
+		dom.addClass("transition ease-out duration-1000");
+		dom.addClass("opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95");
+		await _nextFrame();
+		dom.removeClass("opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95");
+		dom.addClass("opacity-100 translate-y-0 sm:scale-100");
+
+
+
+	// 	Entering: "ease-out duration-300"
+	// 	From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+	// 	To: "opacity-100 translate-y-0 sm:scale-100"
+	//
+	//  Leaving: "ease-in duration-200"
+	// 	From: "opacity-100 translate-y-0 sm:scale-100"
+	// 	To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+
+	},
+	async modal_leave(element) {
+
+		const dom = $(element);
+
+		
+		dom.addClass("transition ease-in duration-200");
+		dom.addClass("opacity-100 translate-y-0 sm:scale-100");
+		
+		await _nextFrame();
+		dom.removeClass("opacity-100 translate-y-0 sm:scale-100");
+		dom.addClass("opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95");
+		
+		await _afterTransition(dom.element());
+
+		dom.addClass("hidden sm:hidden");
+
+	}
+}
+
+export { flash, utils, i18n, router, logoff, overlay, modal, transitions };
 
 
 

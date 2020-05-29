@@ -8,11 +8,34 @@ const dom = function (s) {
 };
 
 dom.prototype = {
+    id: function() {
+        return this.value[0].id;
+    },
+    data: function(key, value) {
+        if((typeof value == 'undefined')) return this.value[0].dataset[key];
+        else {
+            this.value[0].dataset[key] = value;
+        }
+    },
+    visible: function() {
+        const style = window.getComputedStyle(this.value[0]);
+        return !(style.display === 'none')
+    },
+    element: function(index = 0) {
+        return this.value[index]
+    },
+    elements: function() {
+        return this.value
+    },
     click: function() {
         this.value[0].click();
     },
     val: function(v) {
-        return (typeof v == 'undefined') ? this.value[0].value : this.value[0].value = v;
+        if((typeof v == 'undefined')) return this.value[0].value;
+        else {
+            if (this.value[0]) { return this.value[0].value = v; }
+            else { console.error(`Element not found!`); }
+        }
     },
     eq: function (n) {
         this.value = [this.value[n]];
@@ -56,6 +79,16 @@ dom.prototype = {
         return this.each(function (i) {
             i.addEventListener(type, fn, false);
         });
+    },
+    hasClass: function (v) {
+        var a = v.split(' ');
+        let has = false;
+        this.each(function (i) {
+            for (var x = 0; x < a.length; x++) {
+                if (i.classList.contains(a[x])) { has = true; } 
+            }
+        });
+        return has;
     },
     addClass: function (v) {
         var a = v.split(' ');
@@ -144,10 +177,16 @@ dom.prototype = {
           child !== this.value[0]);
         return this;
     },
-    children: function () {
-        this.value = Array.prototype.filter.call(this.value[0].children, (child) =>
-          child !== this.value[0]);
-        return this;
+    children: function (v) {
+        if((typeof v == 'undefined')) {
+            this.value = Array.prototype.filter.call(this.value[0].children, (child) =>
+            child !== this.value[0]);
+          return this;
+        } else {
+            this.value = this.value[0].querySelectorAll(v);
+            return this;
+        }
+
     },
     offset: function () {
         return this.each(function (i) {
@@ -156,6 +195,7 @@ dom.prototype = {
     },
     log: function () {
         console.log(this);
+        return this;
     },
 };
 

@@ -49,29 +49,41 @@ const wipe_user_data = (include_lang = false) => {
 };
 
 const state = {
-
-	set(key, value) {
-
+	set({key, value, namespace = "global"}) {
 		let current_state = {};
 
 		Object.assign(current_state, state_data); // We return the previous state below
 
-		state_data[key] = value;
+		if(typeof state_data[namespace] === "undefined") {
+			state_data[namespace] = {};
+		}
 
-		log(`State for key ${key} changed to ${JSON.stringify(value)}`, "STATE");
+		state_data[namespace][key] = value;
 
-		radio.emit("ZOMBI_STATE_CHANGE", { key, value, state_data });
+		log(`State for module/key ${namespace}/${key} changed to ${JSON.stringify(value)}`, "STATE");
+
+		dispatch("ZOMBI_STATE_CHANGE", { namespace, key, value, state_data });
 
 		return current_state;
-
 	},
-
-	get(key) { if (state_data[key]) { return state_data[key]; } else { return null; } },
-
+	get({key = null, namespace = "global"}) {
+		console.log("getting satte " + key)
+		if(key === null) {
+			if (state_data[namespace]) {
+				return state_data[namespace]; 
+			} else { 
+				return null; 
+			} 
+		} else {
+			if (state_data[namespace] && state_data[namespace][key]) {
+				return state_data[namespace][key]; 
+			} else { 
+				return null; 
+			} 
+		}
+	},
 	data() { return state_data; },
-
-	clear() { state_data = {}; radio.emit("ZOMBI_STATE_CHANGE", { key: null, value: null, state_data }); }
-
+	clear() { state_data = {}; dispatch("ZOMBI_STATE_CHANGE", { namespace: null, key: null, value: null, state_data }); }
 };
 
 const ws = {
@@ -119,7 +131,7 @@ const ws = {
 
 				ws_client.onopen = () => {
 
-					radio.emit("ZOMBI_SERVER_SOCKET_CONNECTED");
+					dispatch("ZOMBI_SERVER_SOCKET_CONNECTED");
 
 					log("Connected", "SOCKETS");
 
@@ -127,7 +139,7 @@ const ws = {
 
 				ws_client.onclose = event => {
 
-					radio.emit("ZOMBI_SERVER_SOCKET_DISCONNECTED");
+					dispatch("ZOMBI_SERVER_SOCKET_DISCONNECTED");
 
 					const reconnect_time = config.SOCKETS_RECCONNECT_TIME;
 
@@ -159,7 +171,7 @@ const ws = {
 
 						const data = JSON.parse(event.data);
 
-						radio.emit("ZOMBI_SERVER_SOCKET_RECEIVE", data);
+						dispatch("zombi-server-socket-receive", data);
 
 					}
 
@@ -209,7 +221,7 @@ const _exec = (params, callback) => {
 	const smarap = (Array.isArray(params)) ? { mod: params[0], fun: params[1], args: params[2] } : params;
 	const merged = { ...base, ...smarap };
 
-	radio.emit("ZOMBI_SERVER_CALL_START", [merged.mod, merged.fun]);
+	dispatch("zombi-server-call-start", [merged.mod, merged.fun]);
 
 	const url = config.SERVER_HTTP_HOST ? `${config.SERVER_HTTP_HOST}${config.SERVER_PATH}` : config.SERVER_PATH;
 
@@ -265,14 +277,14 @@ const _exec = (params, callback) => {
 
 				} else {
 
-					if (response.code === 1001) { radio.emit("ZOMBI_SERVER_SESSION_EXPIRED"); } 
+					if (response.code === 1001) { dispatch("zombi-server-session-expired"); } 
 					else { if (typeof callback === "function") { callback(response); } }
 
 				}
 
 			} 
 
-			radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response });
+			dispatch("zombi-server-call-traffic", { sequence: merged.sequence, request: merged, response });
 		})
 		.catch((error) => {
 
@@ -287,132 +299,53 @@ const _exec = (params, callback) => {
 
 			log(error, "SERVER", true);
 
-			radio.emit("ZOMBI_SERVER_CALL_TRAFFIC", { sequence: merged.sequence, request: merged, response: `Server error: ${error.message}` });
+			dispatch("zombi-server-call-traffic", { sequence: merged.sequence, request: merged, response: `Server error: ${error.message}` });
 		})
 		.then(() => {
-			radio.emit("ZOMBI_SERVER_CALL_FINISH", [merged.mod, merged.fun]);
+			dispatch("zombi-server-call-finish", [merged.mod, merged.fun]);
 		});
 
 	return merged;
 
 };
 
-const radio = {
-
-	turnon(station, func, listener = null) {
-
-		if (!radio_stations[station]) { radio_stations[station] = []; }
-
-		var radio_device_id = (++radio_device_counter).toString();
-
-		if (radio._check_exists(station, "listener", listener)) {
-
-			log(`RADIO: The listner ${listener} is already listening to ${station}`);
-
-		} else {
-
-			radio_stations[station].push({
-				radio_device_id,
-				func,
-				listener
-			});
-
-			const who_is_listening = (listener === null) ? radio_device_id : listener;
-
-			log(`Receptor ${who_is_listening} is now listening to station ${station}`, "RADIO");
-
-		}
-
-		return radio_device_id;
-
-	},
-
-	emit(station, music = null) {
-
-		// const sequence = sequence();
-
-		if (!radio_stations[station]) {
-
-			log(`Nobody is listening to station ${station}`, "RADIO");
-
-			return false;
-
-		}
-
-		setTimeout(function () {
-
-			let subscribers = radio_stations[station],
-				len = subscribers ? subscribers.length : 0;
-
-			while (len--) {
-
-				subscribers[len].func(music);
-
-				const who_is_listening = (subscribers[len].listener === null) ? subscribers[len].radio_device_id : subscribers[len].listener;
-
-				log(`Station ${station} is emiting the music ${JSON.stringify(music)	} to receptor ${who_is_listening}`, "RADIO");
-
-			}
-
-		}, 0);
-
-	},
-
-	turnoff(radio_device_id) {
-
-		for (var m in radio_stations) {
-
-			if (radio_stations[m]) {
-
-				for (var i = 0, j = radio_stations[m].length; i < j; i++) {
-
-					if (radio_stations[m][i].radio_device_id === radio_device_id) {
-
-						log(`Device ${radio_device_id} is not listening to station ${m} anymore`, "RADIO");
-
-						radio_stations[m].splice(i, 1);
-
-						return radio_device_id;
-
-					}
-
-				}
-
-			}
-
-		}
-
-	},
-
-	_check_exists(station2add, what, thing) {
-
-		let it_does = false;
-
-		for (const station in radio_stations) {
-
-			if (radio_stations[station]) {
-
-				const j = radio_stations[station].length;
-
-				for (let i = 0; i < j; i++) {
-
-					if (station === station2add && radio_stations[station][i][what] === thing) {
-
-						it_does = true;
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return it_does;
-
-	},
-
+const listen = (event, fun, who = "UNKNOWN") => {
+	log(`${who} is now listening to event ${event}`, "EVENTS");
+	window.addEventListener(event, e => { fun(e.detail); });
 };
+
+const dispatch = (event, data = null) => {
+	if(event !== "zombi-server-call-traffic") {
+		log(`Dispatching event ${event} with data ${JSON.stringify(data)}`, "EVENTS");
+	}
+	const e = new CustomEvent(event, { bubbles: true, detail: data });
+	window.dispatchEvent(e);
+};
+
+// const radio = {
+
+// 	turnon(station, func, listener = null) {
+
+// 		const who_is_listening = (listener === null) ? radio_device_id : listener;
+
+// 		window.addEventListener(station, event => {
+// 			log(`Receptor ${who_is_listening} is now listening to station ${station}`, "RADIO");
+// 			func(event.detail)
+//         });
+
+// 	},
+
+// 	emit(station, music = null) {
+
+// 		log(`Station ${station} is emiting the music ${JSON.stringify(music)}`, "RADIO");
+
+// 		const event = new CustomEvent(station, { detail: music });
+
+//         window.dispatchEvent(event);
+
+// 	},
+
+// };
 
 const utils = {
 
@@ -447,10 +380,12 @@ export {
 	language,
 	timezone,
 	log,
-	radio,
+	// radio,
 	server,
 	state,
 	utils,
 	ws,
-	wipe_user_data
+	wipe_user_data,
+	listen,
+	dispatch
 }

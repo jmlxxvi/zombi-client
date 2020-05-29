@@ -129,7 +129,14 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: [
-                            "@babel/preset-env"
+                            [
+                                "@babel/preset-env",
+                                { //https://github.com/babel/babel-loader/issues/484
+                                    "targets": {
+                                        "node": "10"
+                                    }
+                                }
+                            ]
                         ]
                     }
                 }
@@ -139,7 +146,7 @@ module.exports = {
     plugins,
     devServer: {
         watchContentBase: true,
-        contentBase: path.resolve(__dirname, "dist"),
+        contentBase: path.join(__dirname, "dist"),
         open: true,
     },
 }

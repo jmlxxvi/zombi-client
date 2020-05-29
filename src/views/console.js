@@ -3,6 +3,7 @@ import config from "../js/config";
 import * as ZOMBI from "../js/zombi";
 import * as app from "../js/app";
 import $ from "../js/dom";
+
 let started = false;
 
 let me = null;
@@ -20,8 +21,16 @@ const render = (view, params, fragment) => {
 
     } else {
 
+        return true;
+
 
         ZOMBI.log(`This is the first time I run`, `VIEW:${me}`);
+
+        // ZOMBI.listen("zombi-server-call-traffic",music => { console.log(music); }, "SPINNER_LISTENER_INDEX");
+
+        return true;
+
+
 
         const console_syntax_colors = (json) => {
 

@@ -56,7 +56,7 @@ $("#login_button").on("click", event => {
     const password = $("#password").val();
     const username = $("#username").val();
 
-    console.log(flash)
+    // console.log(flash)
 
     // flash({ message: "if (response.code === 1004) { flash({ message: i18n_labels[selected_language][", title: "Warning!: " });
 

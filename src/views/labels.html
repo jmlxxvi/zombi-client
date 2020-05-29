@@ -1,91 +1,65 @@
-<!-- <img src="img/icons/geek_zombie512.png" /> -->
-<!-- table start -->
-<header class="bg-white shadow mb-4 mt-2">
-    <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold leading-tight text-gray-900">
-            <span class="i18n">HOME</span>
+<header class="mt-2 mb-2 bg-white shadow">
+    <div class="max-w-6xl px-4 py-6 mx-auto sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold leading-tight text-gray-800">
+            <span class="i18n">LABELS</span>
         </h1>
     </div>
 </header>
 
 <div class="flex flex-col">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div>
+    <div class="py-2 -my-2 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
+            <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+                <div class="flex items-center justify-center flex-1 sm:justify-between">
+                    <div class="hidden sm:block">
                         <p class="leading-5 text-gray-700">
                             Labels
                         </p>
                     </div>
-                    <div>
-                        <span class="text-sm leading-5 text-gray-700">
-                            Search
-                        </span><input type="text">
+                    <div class="flex items-center">
+                        <button href="#" class="mx-4 text-sm font-medium leading-5 text-indigo-600 labels_table_add_button hover:text-indigo-900">
+                            Add Label
+                        </button>
+                        <div>
+                            <input type="text"
+                                class="pl-4 leading-10 placeholder-gray-600 bg-gray-100 rounded labels_table_search"
+                                placeholder="">
+                        </div>
                     </div>
+
                 </div>
             </div>
-            <table class="labels_table min-w-full">
-                <thead>
-                    <tr>
-                        <th
-                            class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Name
-                        </th>
-                        <th
-                            class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Title
-                        </th>
-                        <th
-                            class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th
-                            class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Role
-                        </th>
-                        <th class="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white">
-                    <tr>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <img class="h-10 w-10 rounded-full"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                        alt="" />
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm leading-5 font-medium text-gray-900">Bernard Lane</div>
-                                    <div class="text-sm leading-5 text-gray-500">bernardlane@example.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <div class="text-sm leading-5 text-gray-900">Director</div>
-                            <div class="text-sm leading-5 text-gray-500">Human Resources</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <span
-                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Active
-                            </span>
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                            Owner
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                            <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="max-w-6xl overflow-x-auto">
+                <table class="w-full labels_table">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                                <a href="#" class="labels_table_order" data-order="label_name"><span
+                                        class="i18n">NAME</span></a>
+                            </th>
+                            <th
+                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                                <a href="#" class="labels_table_order" data-order="label_lang_en"><span
+                                        class="i18n">LANG_EN</span></a>
+                            </th>
+                            <th
+                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                                <a href="#" class="labels_table_order labels_table_order_user_lang"
+                                    data-order="label_lang_es">
+                                    <span id="labels_table_user_lang"></span></a>
+                            </th>
+                            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                    </tbody>
+                </table>
+            </div>
 
-            <div class="bg-white px-4 py-3 flex items-center justify-end sm:justify-between border-t border-gray-200 sm:px-6">
-                <div class="hidden sm:block">
+            <div
+                class="flex items-center justify-end px-4 py-3 bg-white border-t border-gray-200 sm:justify-between sm:px-6">
+                <div class="hidden labels_table_message sm:block">
                     <p class="text-sm leading-5 text-gray-700">
                         Showing
                         <span class="font-medium">1</span>
@@ -98,11 +72,11 @@
                 </div>
                 <div class="flex items-end">
                     <a href="#"
-                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                        class="relative inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md labels_table_previous hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
                         <span class="i18n">PREVIOUS</span>
                     </a>
                     <a href="#"
-                        class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                        class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md labels_table_next hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
                         <span class="i18n">NEXT</span>
                     </a>
                 </div>
@@ -110,6 +84,373 @@
         </div>
     </div>
 </div>
+
+
+<!-- Edit Modal -->
+<div id="labels_edit_modal" class="hidden modal">
+    <div class="fixed inset-x-0 bottom-0 h-full px-4 pb-4 overflow-y-auto sm:inset-0 sm:flex sm:items-center sm:justify-center">
+
+        <div class="fixed inset-0 close_modal">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <div class="h-full transition-all transform bg-white shadow-xl sm:max-w-lg sm:w-full sm:rounded-lg"
+            role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div class="overflow-hidden bg-white shadow">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 i18n">
+                        EDIT
+                    </h3>
+                    <p class="max-w-2xl mt-1 text-sm leading-5 text-gray-500">
+                    </p>
+                </div>
+                <div>
+                    <dl>
+                        <div
+                            class="items-center px-4 py-2 text-left bg-gray-50 sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">NAME</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_name" class="block w-full uppercase form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_EN</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_en" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_ES</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_es" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_PT</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_pt" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_FR</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_fr" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_DE</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_de" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_IT</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_it" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_HE</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_he" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_RU</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_ru" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_KO</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_ko" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_JA</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_ja" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_ZH</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_edit_label_lang_zh" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">DETAILS</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <textarea id="labels_edit_details" class="block w-full form-input"></textarea>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                <input type="hidden" id="labels_edit_id">
+            </div>
+            <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
+                <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
+                    <button type="button"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md shadow-sm labels_edit_save_button i18n hover:bg-gray-700 focus:outline-none focus:border-gray-300 focus:shadow-outline-gray sm:text-sm sm:leading-5">
+                        SAVE
+                    </button>
+                </span>
+                <span class="flex w-full mt-3 rounded-md shadow-sm sm:mt-0 sm:w-auto">
+                    <button type="button"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm i18n close_modal hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
+                        CANCEL
+                    </button>
+                </span>
+                <span class="flex w-full mt-3 mr-auto rounded-md shadow-sm sm:mt-0 sm:w-auto">
+                    <button type="button"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-red-600 border border-transparent rounded-md shadow-sm labels_edit_save_button i18n hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red sm:text-sm sm:leading-5">
+                        DELETE
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div id="labels_add_modal" class="hidden modal">
+    <div class="fixed inset-x-0 bottom-0 h-full px-4 pb-4 overflow-y-auto sm:inset-0 sm:flex sm:items-center sm:justify-center">
+
+        <div class="fixed inset-0 close_modal">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <div class="h-full transition-all transform bg-white shadow-xl sm:max-w-lg sm:w-full sm:rounded-lg"
+            role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div class="overflow-hidden bg-white shadow">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 i18n">
+                        ADD
+                    </h3>
+                    <p class="max-w-2xl mt-1 text-sm leading-5 text-gray-500">
+                    </p>
+                </div>
+                <div>
+                    <dl>
+                        <div
+                            class="items-center px-4 py-2 text-left bg-gray-50 sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">NAME</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_name" class="block w-full uppercase form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_EN</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_en" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_ES</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_es" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_PT</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_pt" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_FR</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_fr" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_DE</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_de" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_IT</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_it" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_HE</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_he" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_RU</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_ru" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_KO</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_ko" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_JA</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_ja" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">LANG_ZH</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <input id="labels_add_label_lang_zh" class="block w-full form-input">
+                            </dd>
+                        </div>
+                        <div
+                            class="items-center px-4 py-5 text-left bg-white sm:text-right sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium leading-5 text-gray-500">
+                                <span class="i18n">DETAILS</span>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                <textarea id="labels_add_details" class="block w-full form-input"></textarea>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
+                <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
+                    <button type="button"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-red-600 border border-transparent rounded-md shadow-sm labels_add_save_button i18n hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red sm:text-sm sm:leading-5">
+                        SAVE
+                    </button>
+                </span>
+                <span class="flex w-full mt-3 rounded-md shadow-sm sm:mt-0 sm:w-auto">
+                    <button type="button"
+                        class="inline-flex justify-center w-full px-4 py-2 text-base font-medium leading-6 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm close_modal i18n hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue sm:text-sm sm:leading-5">
+                        CANCEL
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- <div id="modal-id"
+    class="fixed inset-0 z-50 flex items-center justify-center hidden overflow-x-hidden overflow-y-auto outline-none modal focus:outline-none">
+    <div class="relative w-auto max-w-3xl mx-auto my-6">
+        <div
+            class="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
+            <div class="flex items-start justify-between p-5 border-b border-gray-300 border-solid rounded-t">
+                <h3 class="text-3xl font-semibold text-gray-800">
+                    Modal Title
+                </h3>
+                <button
+                    class="p-1 ml-auto text-3xl font-semibold leading-none bg-transparent border-0 outline-none modal_close opacity-5 focus:outline-none">
+                    <span
+                        class="block w-6 h-6 text-2xl text-gray-800 bg-transparent outline-none opacity-5 focus:outline-none">
+                        ×
+                    </span>
+                </button>
+            </div>
+            <div class="relative flex-auto p-6">
+                <p class="my-4 text-lg leading-relaxed text-gray-600">
+                    I always felt like I could do anything. That’s the main
+                    thing people are controlled by! Thoughts- their perception
+                    of themselves! They're slowed down by their perception of
+                    themselves. If you're taught you can’t do anything, you
+                    won’t do anything. I was taught I could do everything.
+                </p>
+            </div>
+            <div class="flex items-center justify-end p-6 border-t border-gray-300 border-solid rounded-b">
+                <button
+                    class="px-6 py-2 mb-1 mr-1 text-sm font-bold text-blue-500 uppercase outline-none modal_close background-transparent focus:outline-none"
+                    type="button">
+                    <span class="i18n">CANCEL</span>
+                </button>
+                <button
+                    class="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase bg-red-500 rounded shadow outline-none active:bg-red-600 hover:shadow-lg focus:outline-none"
+                    type="button">
+                    <span class="i18n">SAVE</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+ -->
 
 <!-- table end -->
 
@@ -119,7 +460,7 @@
         <nav class="navbar navbar-expand-sm navbar-light bg-light justify-content-end">
             <h6><span class="i18n" data-i18n="LABELS">LABELS</span></h6>
 
-            <div class="btn-group ml-auto mr-1">
+            <div class="ml-auto mr-1 btn-group">
 
                 <div class="form-inline">
                     <div class="form-group">
@@ -130,7 +471,7 @@
 
             </div>
 
-            <div class="btn-group ml-auto mr-1">
+            <div class="ml-auto mr-1 btn-group">
                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="i18n" data-i18n="ACTIONS">ACTIONS</span>
                 </button>

@@ -10,9 +10,11 @@ const render = (view, params, fragment) => {
 
     me = view;
     
-    ZOMBI.log(`I am a module! ${JSON.stringify(params)}, running on ${me}`, `VIEW:${me}`);
+    ZOMBI.log(`I am a module! They sent me ${JSON.stringify(params)}, running on ${me}`, `VIEW:${me}`);
 
     if(started) {
+
+        started = true;
 
         ZOMBI.log(`I was already started`, `VIEW:${me}`);
 
@@ -24,7 +26,7 @@ const render = (view, params, fragment) => {
 
     }
 
-    started = true;
+    
 
 }
 
