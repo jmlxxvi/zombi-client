@@ -1,8 +1,8 @@
 export default {
 	"DEFAULT_LANGUAGE": "en",
 	"DEFAULT_TIMEZONE": "America/Argentina/Buenos_Aires",
-	"SERVER_HTTP_HOST": "http://localhost:10000",
-	"SERVER_SOCK_HOST": "http://localhost:10000",
+	"SERVER_HTTP_HOST": "https://appdev.smartiumtech.com",
+	"SERVER_SOCK_HOST": "https://appdev.smartiumtech.com",
 	"SERVER_PATH": "/server",
 	"CONSOLE_LOG_ENABLED": true,
 	"LANDING_VIEW": "console",
@@ -13,3 +13,5 @@ export default {
 
 // "SERVER_HTTP_HOST": "https://xn01.zombi.fun:443",
 // "SERVER_SOCK_HOST": "wss://xn01.zombi.fun:443",
+// "SERVER_HTTP_HOST": "http://localhost:10000",
+// "SERVER_SOCK_HOST": "http://localhost:10000",
